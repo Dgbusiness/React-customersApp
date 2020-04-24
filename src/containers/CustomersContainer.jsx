@@ -5,24 +5,9 @@ import PropTypes from 'prop-types';
 import AppFrame from '../components/AppFrame';
 import CustomerList from "../components/CustomersList";
 import CustomersActions from '../components/CustomersActions';
+import { fetchCustomers } from "./../actions/fetchCustomers";
+import { getCustomers } from '../selectors/customers';
 
-const customers = [
-    {
-        "dni":"12345678",
-        "name":"Juan Perez",
-        "age":37
-    },
-    {
-        "dni":"13345678",
-        "name":"Juana Rodriguez",
-        "age":27
-    },
-    {
-        "dni":"14345678",   
-        "name":"Ester Exposito",
-        "age":23
-    },
-];
 
 class CustomersContainer extends Component {
 
@@ -50,6 +35,7 @@ class CustomersContainer extends Component {
     }
 
     render() {
+        const { customers } = this.props;
         return (
             <div>
                 <AppFrame
@@ -62,6 +48,11 @@ class CustomersContainer extends Component {
 
 CustomersContainer.propTypes = {
     fetchCustomers: PropTypes.func.isRequired,
+    customers: PropTypes.array.isRequired,
+};
+
+CustomersContainer.defaultProps = {
+    customers: [],
 };
 
 const mapDispatchToProps = dispatch => {
@@ -72,4 +63,12 @@ const mapDispatchToProps = dispatch => {
     );
 }
 
-export default withRouter(connect(null, mapDispatchToProps)(CustomersContainer));
+const mapStateToProps = state => {
+    return (
+        {
+            customers: getCustomers(state),
+        }
+    );
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CustomersContainer));

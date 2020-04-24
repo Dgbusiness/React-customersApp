@@ -1,0 +1,39 @@
+{
+  "customers": [
+    {
+      "id": "12345678",
+      "dni": "12345678",
+      "name": "CARLITO PEREZ",
+      "age": 40
+    },
+    {
+      "id": "13345678",
+      "dni": "13345678",
+      "name": "Juana la cubana",
+      "age": 27
+    },
+    {
+      "id": "14345678",
+      "dni": "14345678",
+      "name": "Ester Exposito",
+      "age": 23
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  }
+}

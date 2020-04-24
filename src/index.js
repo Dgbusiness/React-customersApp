@@ -15,6 +15,6 @@ const rootComponent = () => {
 }
 
 ReactDOM.render(
-  rootComponent,
+  rootComponent(),
   document.getElementById('root')
 );
