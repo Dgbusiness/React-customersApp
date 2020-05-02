@@ -1,4 +1,4 @@
-import React from 'react';
+import  React,{ Component } from 'react';
 import PropTypes from 'prop-types';
 import { reduxForm, Field } from "redux-form";
 import { Prompt } from "react-router-dom";
@@ -31,22 +31,6 @@ const isNumber = value => {
     );
 }
 
-const MyField = ( { input, meta, type, label, name } ) => {
-    return (
-        <div>
-            <div>
-                <label htmlFor={ name }>{ label }</label>
-            </div>
-            <div>
-                <input { ...input } type={ !type ? "text" : type }/>
-                {
-                    meta.touched && meta.error && <span>{ meta.error }</span>
-                }
-            </div>
-        </div>
-    );
-}
-
 const toNumber = value => value && Number(value);
 const toUpper = value => value && value.toUpperCase();
 const onlyGrow = ( value, previousValue, values ) => {
@@ -55,41 +39,69 @@ const onlyGrow = ( value, previousValue, values ) => {
     );
 }
 
-const CustomerEdit = ({ name, dni, age, handleSubmit, submitting, onBack, pristine, submitSucceeded }) => {
-    return (
-        <div>
-            <h2>Edición del cliente</h2>
-            <form onSubmit={ handleSubmit }>
-                <Field 
-                    name="name" 
-                    component={ MyField } 
-                    label="Nombre"
-                    parse={ toUpper }></Field>
-                <Field 
-                    name="dni" 
-                    component={ MyField } 
-                    validate={ [ isNumber ] }
-                    label="DNI"></Field>
-                <Field 
-                    name="age" 
-                    component={ MyField } 
-                    type="number"
-                    validate={ [ isNumber ] }
-                    label="Edad"
-                    parse={ toNumber }
-                    normalize={ onlyGrow }></Field>
+class CustomerEdit extends Component {
 
-                <CustomersActions>
-                    <button type="submit" disabled={ pristine || submitting }>Aceptar</button>
-                    <button type="button" disabled={ submitting } onClick={ onBack }>Cancelar</button>
-                </CustomersActions>
-                <Prompt 
-                    when={ !pristine && !submitSucceeded }
-                    message="Se perderán los datos si continúa"></Prompt>
-            </form>           
-        </div>
-    );
-};
+    componentDidMount() {
+        if (this.txt) {
+            this.txt.focus();
+        }
+    }
+    
+    renderField = ( { input, meta, type, label, name, withFocus } ) => {
+        return (
+            <div>
+                <div>
+                    <label htmlFor={ name }>{ label }</label>
+                </div>
+                <div>
+                    <input { ...input } 
+                        type={ !type ? "text" : type }
+                        ref={ withFocus && (txt => this.txt = txt) }/>
+                    {
+                        meta.touched && meta.error && <span>{ meta.error }</span>
+                    }
+                </div>
+            </div>
+        );
+    }
+
+    render() {
+        const { handleSubmit, submitting, onBack, pristine, submitSucceeded } = this.props;
+        return (
+            <div>
+                <h2>Edición del cliente</h2>
+                <form onSubmit={ handleSubmit }>
+                    <Field 
+                        withFocus
+                        name="name" 
+                        component={ this.renderField } 
+                        label="Nombre"></Field>
+                    <Field 
+                        name="dni" 
+                        component={ this.renderField } 
+                        validate={ [ isNumber ] }
+                        label="DNI"></Field>
+                    <Field 
+                        name="age" 
+                        component={ this.renderField } 
+                        type="number"
+                        validate={ [ isNumber ] }
+                        label="Edad"
+                        parse={ toNumber }
+                        normalize={ onlyGrow }></Field>
+    
+                    <CustomersActions>
+                        <button type="submit" disabled={ pristine || submitting }>Aceptar</button>
+                        <button type="button" disabled={ submitting } onClick={ onBack }>Cancelar</button>
+                    </CustomersActions>
+                    <Prompt 
+                        when={ !pristine && !submitSucceeded }
+                        message="Se perderán los datos si continúa"></Prompt>
+                </form>           
+            </div>
+        );
+    } 
+}
 
 CustomerEdit.propTypes = {
     name: PropTypes.string,

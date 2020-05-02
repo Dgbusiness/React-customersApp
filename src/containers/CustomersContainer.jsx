@@ -12,12 +12,18 @@ import { getCustomers } from '../selectors/customers';
 class CustomersContainer extends Component {
 
     componentDidMount() {
-        this.props.fetchCustomers();
+        if (this.props.customers.length === 0) {
+            this.props.fetchCustomers();
+        }
     }
     
 
     handleAddNew = () => {
         this.props.history.push("/customers/new");
+    }
+    
+    handleOnBack = () => {
+        this.props.history.goBack();
     }
 
     renderBody = customers => {
@@ -29,6 +35,7 @@ class CustomersContainer extends Component {
                 </CustomerList>
                 <CustomersActions>
                     <button onClick={ this.handleAddNew }>Nuevo Cliente</button>
+                    <button onClick={ this.handleOnBack }>Volver</button>
                 </CustomersActions>
             </div>
         );

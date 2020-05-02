@@ -8,6 +8,7 @@ import CustomerEdit from '../components/CustomerEdit';
 import CustomerData from '../components/CustomerData';
 import { fetchCustomers } from "./../actions/fetchCustomers";
 import { updateCustomer } from "./../actions/updateCustomer";
+import { deleteCustomer } from "./../actions/deleteCustomer";
 
 
 class CustomerContainer extends Component {
@@ -32,21 +33,35 @@ class CustomerContainer extends Component {
         this.props.history.goBack();
     }
 
+    handleOnDelete = id => {
+        return this.props.deleteCustomer(id).then(v => {
+            this.props.history.goBack();
+        });
+    }
+
+    renderCustomerControl = ( isEdit, isDelete ) => {
+        if (this.props.customer) {
+            const CustomerControl = isEdit? CustomerEdit : CustomerData;
+            return <CustomerControl 
+                { ...this.props.customer } 
+                onSubmit={ this.handleSubmit }
+                onSubmitSuccess={ this.handleOnSubmitSuccess } 
+                onBack={ this.handleOnBack } 
+                isDeleteAllow={ !!isDelete }
+                onDelete={ this.handleOnDelete }/>;                      
+        }
+
+        return null;
+    }
     renderBody = () => {
         return (
             <Route path="/customers/:dni/edit" children={
-                ( { match } ) => { 
-                    if (this.props.customer) {
-                        const CustomerControl = match? CustomerEdit : CustomerData;
-                        return <CustomerControl 
-                            { ...this.props.customer } 
-                            onSubmit={ this.handleSubmit }
-                            onSubmitSuccess={ this.handleOnSubmitSuccess } 
-                            onBack={ this.handleOnBack } />;                      
-                    }
-
-                    return null;
-                }             
+                ( { match: isEdit } ) => (
+                    <Route path="/customers/:dni/del" children={
+                        ( { match: isDelete } ) => 
+                            this.renderCustomerControl(isEdit, isDelete)
+                    }/>
+                )
             }/>
         );
     }
@@ -85,7 +100,8 @@ const mapDispatchToProps = dispatch => {
     return (
         {
             fetchCustomers: () => dispatch(fetchCustomers()),
-            updateCustomer: ( id, values ) => dispatch(updateCustomer( id, values ))
+            updateCustomer: ( id, values ) => dispatch(updateCustomer( id, values )),
+            deleteCustomer: id => dispatch(deleteCustomer( id )),
         }
     );
 }
